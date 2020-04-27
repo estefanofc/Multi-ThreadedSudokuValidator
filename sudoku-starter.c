@@ -60,7 +60,7 @@ void checkAllRows() {
     parameters *param = (parameters *) malloc(sizeof(parameters));
     param->row = i;
     param->column = 1;
-    pthread_create(&rowTids[i], NULL, checkRow, param);
+    pthread_create(&rowTids[i], NULL, checkRow, (void *) param);
   }
 
   for (int i = 1; i < 10; ++i) {
@@ -72,9 +72,6 @@ void *checkColumn(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-//  printf("2 - ");
-//  printf("%d ", col);
-//  printf("\n");
   int countArr[9] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[i][col];
@@ -98,7 +95,7 @@ void checkAllCols() {
     parameters *param = (parameters *) malloc(sizeof(parameters));
     param->row = 1;
     param->column = i;
-    pthread_create(&colTids[i], NULL, checkColumn, param);
+    pthread_create(&colTids[i], NULL, checkColumn, (void *) param);
   }
 
   for (int i = 1; i < 10; ++i) {
@@ -111,11 +108,6 @@ void *checkBox(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-//  printf("3 - ");
-//  printf("%d ", row);
-//  printf("/");
-//  printf("%d ", col);
-//  printf("\n");
   int countArr[10] = {0};
   for (int i = row; i < row + 3; i++) {
     for (int j = col; j < col + 3; j++) {
@@ -145,7 +137,7 @@ void checkAllBoxes() {
         parameters *param = (parameters *) malloc(sizeof(parameters));
         param->row = i;
         param->column = j;
-        pthread_create(&boxTids[i], NULL, checkBox, param);
+        pthread_create(&boxTids[i], NULL, checkBox, (void *) param);
       }
     }
   }
