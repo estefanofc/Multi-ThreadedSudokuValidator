@@ -31,7 +31,6 @@ typedef struct {
 } parameters;
 
 void *checkRow(void *arg) {
-
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
@@ -142,7 +141,7 @@ void checkAllBoxes() {
     }
   }
   for (int i = 1; i < 10; ++i) {
-    pthread_join(boxTids[i], NULL);
+    pthread_join((void*) &boxTids[i], NULL);
   }
 }
 
@@ -156,7 +155,6 @@ void checkAll() {
   checkAllCols();
   //threads [19-27]
   checkAllBoxes();
-  sleep(2);
   for (int i = 1; i < 28; ++i) {
     if (valid[i] == 0) {
       isValid = false;
