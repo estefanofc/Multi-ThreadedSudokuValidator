@@ -18,7 +18,7 @@ int grid[10][10] = {
     {0, 7, 6, 2, 3, 9, 1, 4, 5, 8},
     {0, 3, 7, 1, 9, 5, 6, 8, 4, 2},
     {0, 4, 9, 6, 1, 8, 2, 5, 7, 3},
-    {0, 2, 8, 5, 4, 7, 3, 9, 1, 6}
+    {0, 2, 8, 5, 4, 7, 3, 7, 1, 6}
 };
 
 int valid[28] = {0};
@@ -30,9 +30,12 @@ typedef struct {
 } parameters;
 
 void *checkRow(void *arg) {
+
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
+  printf("1 - ");
+  printf(row);
   int countArr[10] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[row][i];
@@ -67,6 +70,8 @@ void *checkColumn(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
+  printf("2 - ");
+  printf(col);
   int countArr[9] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[i][col];
@@ -103,6 +108,10 @@ void *checkBox(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
+  printf("3 - ");
+  printf(row);
+  printf("/");
+  printf(col);
   int countArr[10] = {0};
   for (int i = row; i < row + 3; i++) {
     for (int j = col; j < col + 3; j++) {
@@ -145,7 +154,7 @@ void checkAllBoxes() {
 void checkAll() {
   //threads [1-9]
   checkAllRows();
-  printf("1");
+
   //threads [10-18]
   checkAllCols();
   //threads [19-27]
