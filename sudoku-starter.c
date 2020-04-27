@@ -21,6 +21,8 @@ int grid[10][10] = {
     {0, 2, 8, 5, 4, 7, 3, 9, 1, 6}
 };
 
+int valid[28] = {0};
+
 /* structure for passing data to threads */
 typedef struct {
   int row;
@@ -28,67 +30,91 @@ typedef struct {
 } parameters;
 
 void *checkRow(void *arg) {
-  parameters *param = (parameters*) arg;
+  parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-  int countArr[9] = {0};
+  int countArr[10] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[row][i];
-    if(curr < 1 || curr > 9 || countArr[curr - 1] == 1) {
+    if (curr < 1 || curr > 9 || countArr[curr] == 1) {
       pthread_exit(NULL);
     } else {
-      countArr[curr - 1] = 1;
+      countArr[curr] = 1;
     }
   }
+  //threads: [1 - 9]
+  valid[row] = 1;
 }
 
 // Check all 9 rows of the Sudoku grid,
 // using a separate thread for each row.
 void checkAllRows() {
-  pthread_t rowTids[10];                    // TIDs for row threads
+  pthread_t rowTids[10];
+  for (int i = 1; i < 10; ++i) {
+    parameters *param = (parameters *) malloc(sizeof(parameters));
+    param->row = i;
+    param->column = 1;
+    pthread_create(&rowTids[i], NULL, checkRow, param);
+  }
 
-
+  for (int i = 1; i < 10; ++i) {
+    pthread_join(rowTids[i], NULL);
+  }
 }
 
 void *checkColumn(void *arg) {
-  parameters *param = (parameters*) arg;
+  parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
   int countArr[9] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[i][col];
-    if(curr < 1 || curr > 9 || countArr[curr - 1] == 1) {
+    if (curr < 1 || curr > 9 || countArr[curr] == 1) {
       pthread_exit(NULL);
     } else {
-      countArr[curr - 1] = 1;
+      countArr[curr] = 1;
     }
   }
+  //threads: [10 - 18]
+  valid[col + 9] = 1;
 }
 
 // Check all 9 columns of the Sudoku grid, 
 // using a separate thread for each column.
 void checkAllCols() {
-  pthread_t colTids[10];                    // TIDs for row threads
+  // TIDs for col threads
+  pthread_t colTids[10];
+  for (int i = 1; i < 10; ++i) {
+    parameters *param = (parameters *) malloc(sizeof(parameters));
+    param->row = 1;
+    param->column = i;
+    pthread_create(&colTids[i], NULL, checkColumn, param);
+  }
+
+  for (int i = 1; i < 10; ++i) {
+    pthread_join(colTids[i], NULL);
+  }
 
 }
 
-void* checkBox(void* arg) {
-  parameters *param = (parameters*) arg;
+void *checkBox(void *arg) {
+  parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-  int countArr[9] = {0};
+  int countArr[10] = {0};
   for (int i = row; i < row + 3; i++) {
     for (int j = col; j < col + 3; j++) {
-      int curr = sudoku[i][j];
-      if (curr < 1 || curr > 9 || countArr[curr - 1] == 1) {
+      int curr = grid[i][j];
+      if (curr < 1 || curr > 9 || countArr[curr] == 1) {
         pthread_exit(NULL);
       } else {
-        countArr[curr - 1] = 1;
+        countArr[curr] = 1;
       }
     }
   }
   // If reached this point, 3x3 subsection is valid.
-  //valid[row + col/3] = 1; // Maps the subsection to an index in the first 8
+  //threads: [19 - 27]
+  valid[row + col / 3 + 18] = 1;
   // indices of the valid array
   pthread_exit(NULL);
 }
@@ -96,14 +122,38 @@ void* checkBox(void* arg) {
 // Check all 9 boxes of the Sudoku grid, 
 // using a separate thread for each box.
 void checkAllBoxes() {
-  pthread_t boxTids[10];                    // TIDs for row threads
+  // TIDs for box threads
+  pthread_t boxTids[10];
+  for (int i = 1; i < 10; ++i) {
+    for (int j = 1; j < 10; ++j) {
+      if (i % 3 == 1 && j % 3 == 1) {
+        parameters *param = (parameters *) malloc(sizeof(parameters));
+        param->row = i;
+        param->column = j;
+        pthread_create(&boxTids[i], NULL, checkBox, param);
+      }
+    }
+  }
+  for (int i = 1; i < 10; ++i) {
+    pthread_join(boxTids[i], NULL);
+  }
 }
 
 // check rows, columns and boxes
 void checkAll() {
+  //threads [1-9]
   checkAllRows();
+  //threads [10-18]
   checkAllCols();
+  //threads [19-27]
   checkAllBoxes();
+  for (int i = 1; i < 28; ++i) {
+    if (valid[i] == 0) {
+      printf("puzzle is NOT valid");
+      return;
+    }
+  }
+  printf("puzzle is valid");
 }
 
 int main() {
