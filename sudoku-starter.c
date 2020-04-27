@@ -1,9 +1,7 @@
-#include <assert.h>         // assert
 #include <pthread.h>        // pthread*
 #include <stdio.h>          // printf
 #include <stdlib.h>         // calloc
-#include "stdbool.h"
-#include <unistd.h>
+#include "stdbool.h"        // boolean
 // 'grid' holds the Sudoku grid to be checked.  Notice that we define row-0
 // and column-0 to be all-zeroes.  This just makes indexing easier to
 // understand: for example, the first row of the Sudoku puzzle lies
@@ -19,7 +17,7 @@ int grid[10][10] = {
     {0, 7, 6, 2, 3, 9, 1, 4, 5, 8},
     {0, 3, 7, 1, 9, 5, 6, 8, 4, 2},
     {0, 4, 9, 6, 1, 8, 2, 5, 7, 3},
-    {0, 2, 8, 5, 4, 7, 3, 9, 2, 6}
+    {0, 2, 8, 5, 4, 7, 3, 9, 1, 6}
 };
 
 int valid[28] = {0};
@@ -30,13 +28,11 @@ typedef struct {
   int column;
 } parameters;
 
+//checks the validity of an individual row
 void *checkRow(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-//  printf("1 - ");
-//  printf("%d ", row);
-//  printf("\n");
   int countArr[10] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[row][i];
@@ -46,6 +42,7 @@ void *checkRow(void *arg) {
       countArr[curr] = 1;
     }
   }
+  // If reached this point, row is valid
   //threads: [1 - 9]
   valid[row] = 1;
   pthread_exit(NULL);
@@ -61,12 +58,13 @@ void checkAllRows() {
     param->column = 1;
     pthread_create(&rowTids[i], NULL, checkRow, (void *) param);
   }
-
+  //join threads
   for (int i = 1; i < 10; ++i) {
     pthread_join(rowTids[i], NULL);
   }
 }
 
+//checks the validity of an individual column
 void *checkColumn(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
@@ -80,6 +78,7 @@ void *checkColumn(void *arg) {
       countArr[curr] = 1;
     }
   }
+  // If reached this point, column is valid
   //threads: [10 - 18]
   valid[col + 9] = 1;
   pthread_exit(NULL);
@@ -96,13 +95,14 @@ void checkAllCols() {
     param->column = i;
     pthread_create(&colTids[i], NULL, checkColumn, (void *) param);
   }
-
+  //join threads
   for (int i = 1; i < 10; ++i) {
     pthread_join(colTids[i], NULL);
   }
 
 }
 
+//checks the validity of an individual grid
 void *checkBox(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
@@ -118,10 +118,9 @@ void *checkBox(void *arg) {
       }
     }
   }
-  // If reached this point, 3x3 subsection is valid.
+  // If reached this point, grid is valid
   //threads: [19 - 27]
   valid[row + col / 3 + 18] = 1;
-  // indices of the valid array
   pthread_exit(NULL);
 }
 
@@ -141,6 +140,7 @@ void checkAllBoxes() {
       }
     }
   }
+  //join threads
   for (int i = 1; i < 10; ++i) {
     pthread_join(boxTids[i], NULL);
   }
@@ -151,7 +151,6 @@ void checkAll() {
   bool isValid = true;
   //threads [1-9]
   checkAllRows();
-
   //threads [10-18]
   checkAllCols();
   //threads [19-27]
@@ -159,16 +158,13 @@ void checkAll() {
   for (int i = 1; i < 28; ++i) {
     if (valid[i] == 0) {
       isValid = false;
-      printf("%d ", i);
-      printf(" - ");
-      printf("%d ", valid[i]);
       break;
     }
   }
   if (isValid) {
-    printf("puzzle is valid");
+    printf("puzzle is valid\n");
   } else {
-    printf("puzzle is NOT valid");
+    printf("puzzle is NOT valid\n");
   }
 }
 
