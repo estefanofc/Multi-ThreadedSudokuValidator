@@ -18,7 +18,7 @@ int grid[10][10] = {
     {0, 7, 6, 2, 3, 9, 1, 4, 5, 8},
     {0, 3, 7, 1, 9, 5, 6, 8, 4, 2},
     {0, 4, 9, 6, 1, 8, 2, 5, 7, 3},
-    {0, 2, 8, 5, 4, 7, 3, 7, 1, 6}
+    {0, 2, 8, 5, 4, 7, 3, 9, 1, 6}
 };
 
 int valid[28] = {0};
@@ -63,7 +63,7 @@ void checkAllRows() {
   }
 
   for (int i = 1; i < 10; ++i) {
-    pthread_join(rowTids[i], NULL);
+    pthread_join((void *) &rowTids[i], NULL);
   }
 }
 
@@ -101,7 +101,7 @@ void checkAllCols() {
   }
 
   for (int i = 1; i < 10; ++i) {
-    pthread_join(colTids[i], NULL);
+    pthread_join((void *) &colTids[i], NULL);
   }
 
 }
@@ -149,7 +149,7 @@ void checkAllBoxes() {
     }
   }
   for (int i = 1; i < 10; ++i) {
-    pthread_join(boxTids[i], NULL);
+    pthread_join((void *) &boxTids[i], NULL);
   }
 }
 
