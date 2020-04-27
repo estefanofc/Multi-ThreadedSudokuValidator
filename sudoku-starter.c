@@ -34,8 +34,9 @@ void *checkRow(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-  //printf("1 - ");
-  //printf(row);
+  printf("1 - ");
+  printf("%d ", row);
+  printf("\n");
   int countArr[10] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[row][i];
@@ -70,8 +71,9 @@ void *checkColumn(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-  //printf("2 - ");
-  //printf(col);
+  printf("2 - ");
+  printf("%d ", col);
+  printf("\n");
   int countArr[9] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[i][col];
@@ -108,10 +110,11 @@ void *checkBox(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-  //printf("3 - ");
-  //printf(row);
-  //printf("/");
-  //printf(col);
+  printf("3 - ");
+  printf("%d ", row);
+  printf("/");
+  printf("%d ", col);
+  printf("\n");
   int countArr[10] = {0};
   for (int i = row; i < row + 3; i++) {
     for (int j = col; j < col + 3; j++) {
