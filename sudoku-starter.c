@@ -2,6 +2,7 @@
 #include <pthread.h>        // pthread*
 #include <stdio.h>          // printf
 #include <stdlib.h>         // calloc
+#include "stdbool.h"
 
 // 'grid' holds the Sudoku grid to be checked.  Notice that we define row-0
 // and column-0 to be all-zeroes.  This just makes indexing easier to
@@ -34,9 +35,9 @@ void *checkRow(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-  printf("1 - ");
-  printf("%d ", row);
-  printf("\n");
+//  printf("1 - ");
+//  printf("%d ", row);
+//  printf("\n");
   int countArr[10] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[row][i];
@@ -71,9 +72,9 @@ void *checkColumn(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-  printf("2 - ");
-  printf("%d ", col);
-  printf("\n");
+//  printf("2 - ");
+//  printf("%d ", col);
+//  printf("\n");
   int countArr[9] = {0};
   for (int i = 1; i < 10; ++i) {
     int curr = grid[i][col];
@@ -110,11 +111,11 @@ void *checkBox(void *arg) {
   parameters *param = (parameters *) arg;
   int row = param->row;
   int col = param->column;
-  printf("3 - ");
-  printf("%d ", row);
-  printf("/");
-  printf("%d ", col);
-  printf("\n");
+//  printf("3 - ");
+//  printf("%d ", row);
+//  printf("/");
+//  printf("%d ", col);
+//  printf("\n");
   int countArr[10] = {0};
   for (int i = row; i < row + 3; i++) {
     for (int j = col; j < col + 3; j++) {
@@ -155,6 +156,7 @@ void checkAllBoxes() {
 
 // check rows, columns and boxes
 void checkAll() {
+  bool isValid = false;
   //threads [1-9]
   checkAllRows();
 
@@ -164,11 +166,18 @@ void checkAll() {
   checkAllBoxes();
   for (int i = 1; i < 28; ++i) {
     if (valid[i] == 0) {
-      printf("puzzle is NOT valid");
-      return;
+      isValid = true;
+      printf("%d ", i);
+      printf(" - ");
+      printf("%d ", valid[i]);
+      break;
     }
   }
-  printf("puzzle is valid");
+  if (isValid) {
+    printf("puzzle is valid");
+  } else {
+    printf("puzzle is NOT valid");
+  }
 }
 
 int main() {
