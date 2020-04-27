@@ -64,7 +64,7 @@ void checkAllRows() {
   }
 
   for (int i = 1; i < 10; ++i) {
-    pthread_join((void *) &rowTids[i], NULL);
+    pthread_join(rowTids[i], NULL);
   }
 }
 
@@ -99,7 +99,7 @@ void checkAllCols() {
   }
 
   for (int i = 1; i < 10; ++i) {
-    pthread_join((void *) &colTids[i], NULL);
+    pthread_join(colTids[i], NULL);
   }
 
 }
@@ -142,7 +142,7 @@ void checkAllBoxes() {
     }
   }
   for (int i = 1; i < 10; ++i) {
-    pthread_join((void *) &boxTids[i], NULL);
+    pthread_join(boxTids[i], NULL);
   }
 }
 
