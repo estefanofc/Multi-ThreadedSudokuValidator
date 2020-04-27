@@ -44,6 +44,7 @@ void *checkRow(void *arg) {
   }
   //threads: [1 - 9]
   valid[row] = 1;
+  pthread_exit(NULL);
 }
 
 // Check all 9 rows of the Sudoku grid,
@@ -77,6 +78,7 @@ void *checkColumn(void *arg) {
   }
   //threads: [10 - 18]
   valid[col + 9] = 1;
+  pthread_exit(NULL);
 }
 
 // Check all 9 columns of the Sudoku grid, 
