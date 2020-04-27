@@ -145,6 +145,7 @@ void checkAllBoxes() {
 void checkAll() {
   //threads [1-9]
   checkAllRows();
+  printf("1");
   //threads [10-18]
   checkAllCols();
   //threads [19-27]
