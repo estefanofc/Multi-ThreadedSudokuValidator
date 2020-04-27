@@ -3,7 +3,7 @@
 #include <stdio.h>          // printf
 #include <stdlib.h>         // calloc
 #include "stdbool.h"
-
+#include <unistd.h>
 // 'grid' holds the Sudoku grid to be checked.  Notice that we define row-0
 // and column-0 to be all-zeroes.  This just makes indexing easier to
 // understand: for example, the first row of the Sudoku puzzle lies
@@ -148,7 +148,7 @@ void checkAllBoxes() {
 
 // check rows, columns and boxes
 void checkAll() {
-  bool isValid = false;
+  bool isValid = true;
   //threads [1-9]
   checkAllRows();
 
@@ -156,9 +156,10 @@ void checkAll() {
   checkAllCols();
   //threads [19-27]
   checkAllBoxes();
+  sleep(2);
   for (int i = 1; i < 28; ++i) {
     if (valid[i] == 0) {
-      isValid = true;
+      isValid = false;
       printf("%d ", i);
       printf(" - ");
       printf("%d ", valid[i]);
