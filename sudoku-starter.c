@@ -130,18 +130,19 @@ void *checkBox(void *arg) {
 void checkAllBoxes() {
   // TIDs for box threads
   pthread_t boxTids[10];
+  int count = 1;
   for (int i = 1; i < 10; ++i) {
     for (int j = 1; j < 10; ++j) {
       if (i % 3 == 1 && j % 3 == 1) {
         parameters *param = (parameters *) malloc(sizeof(parameters));
         param->row = i;
         param->column = j;
-        pthread_create(&boxTids[i], NULL, checkBox, (void *) param);
+        pthread_create(&boxTids[count++], NULL, checkBox, (void *) param);
       }
     }
   }
   for (int i = 1; i < 10; ++i) {
-    pthread_join((void*) &boxTids[i], NULL);
+    pthread_join(boxTids[i], NULL);
   }
 }
 
